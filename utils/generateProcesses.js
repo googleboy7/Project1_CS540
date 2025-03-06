@@ -3,5 +3,5 @@ export function generateProcesses(count){
         id: i +1,
         arrivalTime: Math.floor(Math.random() * 10),
         burstTime: Math.floor(Math.random() * 10) + 1,
-    }))
+    }));
 }

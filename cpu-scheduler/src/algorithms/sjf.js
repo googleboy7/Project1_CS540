@@ -7,6 +7,7 @@ export function sjf(processes) {
         arrivalTime: p.arrivalTime,
         burstTime: p.burstTime,
         originalBurstTime: p.burstTime, // Store the original burst time
+        startTime: null, // Initialize startTime as null
         finishTime: null, // Initialize finish time as null
     }));
 
@@ -24,7 +25,10 @@ export function sjf(processes) {
             readyQueue.sort((a, b) => a.burstTime - b.burstTime); // Sort by burst time (shortest job first)
             let process = readyQueue.shift();
             
-            // Record the process's execution time in the schedule
+            // Record the process's start time and execution time in the schedule
+            if (process.startTime === null) {
+                process.startTime = time; // Set the start time for the first execution
+            }
             schedule.push({ id: process.id, startTime: time, endTime: time + process.burstTime });
             time += process.burstTime;
             
@@ -48,6 +52,7 @@ export function sjf(processes) {
             id: process.id,
             arrivalTime: process.arrivalTime,
             burstTime: process.originalBurstTime,
+            startTime: process.startTime, // Include start time
             finishTime: process.finishTime,
             turnaroundTime: turnaroundTime,
             waitingTime: waitingTime

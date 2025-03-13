@@ -9,6 +9,7 @@ export function rr(processes, quantum) {
         arrivalTime: p.arrivalTime,
         burstTime: p.burstTime,
         originalBurstTime: p.burstTime, // Store the original burst time
+        startTime: null, // Initialize startTime as null
         finishTime: null, // Initialize finishTime as null
     }));
 
@@ -17,16 +18,20 @@ export function rr(processes, quantum) {
         let execTime = Math.min(quantum, process.burstTime);
         
         // Record the process execution time in the schedule
+        let processIndex = processInfo.findIndex(p => p.id === process.id);
+
+        // Set the start time for the process if it's the first time it gets executed
+        if (processInfo[processIndex].startTime === null) {
+            processInfo[processIndex].startTime = time;
+        }
+
         schedule.push({ id: process.id, startTime: time, endTime: time + execTime });
         time += execTime;
         process.burstTime -= execTime;
 
         // Update the finish time once the process is completed
         if (process.burstTime === 0) {
-            let processIndex = processInfo.findIndex(p => p.id === process.id);
-            if (processIndex !== -1) {
-                processInfo[processIndex].finishTime = time;
-            }
+            processInfo[processIndex].finishTime = time;
         }
 
         // If the process has remaining burst time, add it back to the queue
@@ -44,6 +49,7 @@ export function rr(processes, quantum) {
             id: process.id,
             arrivalTime: process.arrivalTime,
             burstTime: process.originalBurstTime,
+            startTime: process.startTime, // Include start time
             finishTime: process.finishTime,
             turnaroundTime: turnaroundTime,
             waitingTime: waitingTime

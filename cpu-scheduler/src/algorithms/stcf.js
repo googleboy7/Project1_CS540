@@ -8,6 +8,7 @@ export function stcf(processes) {
         arrivalTime: p.arrivalTime,
         burstTime: p.burstTime,
         originalBurstTime: p.burstTime, // Store original burst time for later calculations
+        startTime: null, // Initialize start time
         finishTime: null, // Initialize finish time
     }));
 
@@ -27,6 +28,11 @@ export function stcf(processes) {
             // Sort the readyQueue to execute the process with the shortest remaining burst time
             readyQueue.sort((a, b) => a.burstTime - b.burstTime);
             currentProcess = readyQueue.shift();
+
+            // If the process hasn't started yet, set its start time
+            if (currentProcess.startTime === null) {
+                currentProcess.startTime = time; // Set the start time for the first execution
+            }
 
             // Record the current process execution time in the schedule
             schedule.push({ id: currentProcess.id, startTime: time });
@@ -54,6 +60,7 @@ export function stcf(processes) {
             id: process.id,
             arrivalTime: process.arrivalTime,
             burstTime: process.originalBurstTime,
+            startTime: process.startTime, // Include start time
             finishTime: process.finishTime,
             turnaroundTime: turnaroundTime,
             waitingTime: waitingTime

@@ -2,13 +2,13 @@ import { Bar } from "react-chartjs-2";
 import { useEffect, useRef } from "react";
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from "chart.js";
 import "chart.js/auto"; // Import Chart.js
-
+// Register necessary chart.js components
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
 const ChartDisplay = ({ schedule, currentProcessIndex }) => {
     const chartRef = useRef(null); // Reference to the chart for possible future customization or actions
 
-    // Data for the bar chart
+    // Use chart.js to create the bar chart for the process visualization
     const data = {
         labels: schedule.map((p) => `P${p.id}`),
         datasets: [
@@ -64,9 +64,8 @@ const ChartDisplay = ({ schedule, currentProcessIndex }) => {
                     </div>
                 ))}
             </div>
-            {/* Resize chart */}
-            <Bar ref={chartRef} data={data} options={{ responsive: true, maintainAspectRatio: false }} height={300} width={400} />
-            
+            <Bar ref={chartRef} data={data} />
+
             {/* Displaying the results in a table */}
             <div className="mt-4">
                 <h2 className="text-xl font-bold">Scheduling Results</h2>
@@ -82,9 +81,8 @@ const ChartDisplay = ({ schedule, currentProcessIndex }) => {
                     </thead>
                     <tbody>
                         {schedule.map((process) => {
-                            // Fix NaN by checking undefined values and calculating properly
-                            const turnaroundTime = process.finishTime && process.arrivalTime ? process.finishTime - process.arrivalTime : 0;
-                            const waitingTime = turnaroundTime && process.burstTime ? turnaroundTime - process.burstTime : 0;
+                            const turnaroundTime = process.finishTime - process.arrivalTime;
+                            const waitingTime = turnaroundTime - process.burstTime;
                             return (
                                 <tr key={process.id}>
                                     <td className="border border-gray-300 px-4 py-2">{`P${process.id}`}</td>

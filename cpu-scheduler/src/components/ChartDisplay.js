@@ -35,8 +35,8 @@ const ChartDisplay = ({ schedule, currentProcessIndex }) => {
     }, [currentProcessIndex]);
 
     return (
-        <div>
-            <div style={{ position: "relative", height: "200px", width: "100%" }}>
+        <div className="flex w-full gap-8">
+            <div style={{ position: "relative", height: "200px", width: "50%" }}>
                 {schedule.map((process, index) => (
                     <div
                         key={process.id}
@@ -64,7 +64,9 @@ const ChartDisplay = ({ schedule, currentProcessIndex }) => {
                     </div>
                 ))}
             </div>
-            <Bar ref={chartRef} data={data} />
+            <div style={{ width: "50%" }}>
+                <Bar ref={chartRef} data={data} />
+            </div>
 
             {/* Displaying the results in a table */}
             <div className="mt-4">

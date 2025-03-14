@@ -47,7 +47,7 @@ export function mlfq(processes, quantumLevels = [2, 4, 8]) {
                     queues[level + 1].push(process); // Push to next lower priority queue
                 }
 
-                // If the process has finished, set its finish time
+                // If the process has finished (its burstTime is 0), set its finish time
                 if (process.burstTime === 0 && process.finishTime === null) {
                     process.finishTime = time;
                 }

@@ -7,8 +7,8 @@ export function sjf(processes) {
         arrivalTime: p.arrivalTime,
         burstTime: p.burstTime,
         originalBurstTime: p.burstTime, // Store the original burst time
-        startTime: null, // Initialize startTime as null
-        finishTime: null, // Initialize finish time as null
+        startTime: null, // Initialize start time
+        finishTime: null, // Initialize finish time
     }));
 
     // Sort processes by arrival time

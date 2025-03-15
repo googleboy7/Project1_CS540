@@ -67,5 +67,5 @@ export function mlfq(processes, quantumLevels = [2, 4, 8]) {
         };
     });
 
-    return results;
+    return { schedule, results };
 }

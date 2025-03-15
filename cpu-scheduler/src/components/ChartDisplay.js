@@ -1,14 +1,13 @@
 import { Bar } from "react-chartjs-2";
 import { useEffect, useRef } from "react";
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from "chart.js";
-import "chart.js/auto"; // Import Chart.js
-// Register necessary chart.js components
+import "chart.js/auto";
+
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
-const ChartDisplay = ({ schedule, currentProcessIndex }) => {
-    const chartRef = useRef(null); // Reference to the chart for possible future customization or actions
+const ChartDisplay = ({ schedule = [], results = [], currentProcessIndex }) => {
+    const chartRef = useRef(null);
 
-    // Use chart.js to create the bar chart for the process visualization
     const data = {
         labels: schedule.map((p) => `P${p.id}`),
         datasets: [
@@ -20,7 +19,7 @@ const ChartDisplay = ({ schedule, currentProcessIndex }) => {
             },
             {
                 label: "Finish Time",
-                data: schedule.map((p) => p.finishTime),
+                data: schedule.map((p) => p.endTime),
                 backgroundColor: schedule.map((_, index) => (index <= currentProcessIndex ? "blue" : "gray")),
                 barThickness: 30,
             },
@@ -29,7 +28,6 @@ const ChartDisplay = ({ schedule, currentProcessIndex }) => {
 
     useEffect(() => {
         if (chartRef.current) {
-            // Optional: If you want to animate the chart itself, you can trigger the chart update
             chartRef.current.update();
         }
     }, [currentProcessIndex]);
@@ -42,12 +40,12 @@ const ChartDisplay = ({ schedule, currentProcessIndex }) => {
                         key={process.id}
                         style={{
                             position: "absolute",
-                            left: `${(process.startTime / 10) * 100}%`, // Scale for animation
-                            width: `${(process.burstTime / 10) * 100}%`,
+                            left: `${(process.startTime / 10) * 100}%`,
+                            width: `${((process.endTime - process.startTime) / 10) * 100}%`,
                             top: "50px",
                             height: "30px",
                             backgroundColor: index <= currentProcessIndex ? "green" : "gray",
-                            transition: "all 0.5s ease", // Smooth transition
+                            transition: "all 0.5s ease",
                         }}
                     >
                         <span
@@ -68,7 +66,6 @@ const ChartDisplay = ({ schedule, currentProcessIndex }) => {
                 <Bar ref={chartRef} data={data} />
             </div>
 
-            {/* Displaying the results in a table */}
             <div className="mt-4">
                 <h2 className="text-xl font-bold">Scheduling Results</h2>
                 <table className="table-auto w-full mt-2 border-collapse border border-gray-200">
@@ -82,7 +79,7 @@ const ChartDisplay = ({ schedule, currentProcessIndex }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {schedule.map((process) => {
+                        {results.map((process) => {
                             const turnaroundTime = process.finishTime - process.arrivalTime;
                             const waitingTime = turnaroundTime - process.burstTime;
                             return (

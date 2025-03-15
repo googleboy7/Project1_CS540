@@ -16,7 +16,7 @@ export function rr(processes, quantum) {
     while (queue.length > 0) {
         let process = queue.shift();
         let execTime = Math.min(quantum, process.burstTime);
-        
+
         // Record the process execution time in the schedule
         let processIndex = processInfo.findIndex(p => p.id === process.id);
 
@@ -56,5 +56,5 @@ export function rr(processes, quantum) {
         };
     });
 
-    return results;
+    return { schedule, results };
 }

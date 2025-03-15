@@ -30,7 +30,7 @@ export function stcf(processes) {
                 currentProcess.startTime = time;
             }
 
-            schedule.push({ id: currentProcess.id, startTime: time });
+            schedule.push({ id: currentProcess.id, startTime: time, endTime: time + 1 });
 
             currentProcess.burstTime--;
 
@@ -55,5 +55,5 @@ export function stcf(processes) {
         waitingTime: process.finishTime - process.arrivalTime - process.originalBurstTime,
     }));
 
-    return results;
+    return { schedule, results };
 }

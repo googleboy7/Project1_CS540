@@ -49,5 +49,5 @@ export function sjf(processes) {
         waitingTime: process.finishTime - process.arrivalTime - process.originalBurstTime,
     }));
 
-    return results;
+    return { schedule, results };
 }

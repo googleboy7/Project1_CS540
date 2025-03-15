@@ -10,16 +10,22 @@ import { mlfq } from "../algorithms/mlfq";
 
 export default function Home() {
     const [schedule, setSchedule] = useState([]);
-    const [currentProcessIndex, setCurrentProcessIndex] = useState(0); // To track the current process being animated
-    const [isAnimating, setIsAnimating] = useState(false); // To control the animation state
+    const [results, setResults] = useState([]);
+    const [currentProcessIndex, setCurrentProcessIndex] = useState(0);
+    const [isAnimating, setIsAnimating] = useState(false);
 
     const handleRunAlgorithm = (algorithm, numProcesses, quantum) => {
         const processes = generateProcesses(numProcesses);
-        let result = [];
+        let result = { schedule: [], results: [] };
 
         switch (algorithm) {
             case "fifo":
-                result = fifo(processes);
+                result.schedule = fifo(processes);
+                result.results = result.schedule.map(p => ({
+                    ...p,
+                    turnaroundTime: p.finishTime - p.arrivalTime,
+                    waitingTime: p.finishTime - p.arrivalTime - p.burstTime,
+                }));
                 break;
             case "sjf":
                 result = sjf(processes);
@@ -37,9 +43,10 @@ export default function Home() {
                 break;
         }
 
-        setSchedule(result);
-        setCurrentProcessIndex(0); // Reset process animation index when a new algorithm is run
-        setIsAnimating(false); // Stop the previous animation
+        setSchedule(result.schedule || []);
+        setResults(result.results || []);
+        setCurrentProcessIndex(0);
+        setIsAnimating(false);
     };
 
     useEffect(() => {
@@ -53,8 +60,8 @@ export default function Home() {
                         return prevIndex;
                     }
                 });
-            }, 1000); // 1-second interval for animation step
-            return () => clearInterval(interval); // Cleanup on component unmount
+            }, 1000);
+            return () => clearInterval(interval);
         }
     }, [isAnimating, schedule]);
 
@@ -64,13 +71,12 @@ export default function Home() {
             <AlgorithmControls onRun={handleRunAlgorithm} />
             <button
                 className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
-                onClick={() => setIsAnimating(true)} // Start animation
+                onClick={() => setIsAnimating(true)}
                 disabled={isAnimating || schedule.length === 0}
             >
                 Start Animation
             </button>
-            <ChartDisplay schedule={schedule} currentProcessIndex={currentProcessIndex} />
+            <ChartDisplay schedule={schedule} results={results} currentProcessIndex={currentProcessIndex} />
         </div>
     );
 }
-

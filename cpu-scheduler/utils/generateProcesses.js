@@ -1,8 +1,8 @@
 /**
- * Generates a list of processes for scheduling.
+ * Generates a list of processes for scheduling with ordered burst times.
  * 
  * @param {number} count - The number of processes to generate.
- * @returns {Object[]} - An array of process objects.
+ * @returns {Object[]} - An array of ordered process objects.
  * @throws {Error} - If count is not a positive integer.
  */
 export function generateProcesses(count) {
@@ -10,14 +10,14 @@ export function generateProcesses(count) {
         throw new Error("Count must be a positive integer");
     }
 
-    const processes = Array.from({ length: count }, (_, i) => ({
-        id: i + 1,
-        arrivalTime: Math.floor(Math.random() * 5), // Reduced range for better scheduling
-        burstTime: Math.floor(Math.random() * 10) + 1, // Ensure burstTime is at least 1
-    }));
+    let burstTimes = Array.from({ length: count }, () => Math.floor(Math.random() * 10) + 1);
+    burstTimes.sort((a, b) => a - b); // Ensure burst times are in increasing order
 
-    // Sort processes by arrival time to avoid randomness issues
-    processes.sort((a, b) => a.arrivalTime - b.arrivalTime);
+    const processes = Array.from({ length: count }, ( _, i ) => ({
+        id: i + 1, // Ensure process IDs are in order (P1, P2, P3, ...)
+        arrivalTime: i, // Assign sequential arrival times (0, 1, 2, 3...)
+        burstTime: burstTimes[i], // Assign ordered burst times
+    }));
 
     return processes;
 }

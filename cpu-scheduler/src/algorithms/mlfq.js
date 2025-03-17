@@ -11,10 +11,15 @@ export function mlfq(processes, quantumLevels = [2, 4, 8]) {
         finishTime: null,
     }));
 
+    // Sort processes by arrival time
+    processes.sort((a, b) => a.arrivalTime - b.arrivalTime);
+
     // Push all processes into the first queue (highest priority)
     processes.forEach(p => queues[0].push(p));
 
     while (queues.some(q => q.length > 0)) {
+        let executed = false;
+
         for (let level = 0; level < queues.length; level++) {
             let queue = queues[level];
 
@@ -38,16 +43,27 @@ export function mlfq(processes, quantumLevels = [2, 4, 8]) {
                 process.burstTime -= execTime;
 
                 // Move process to the next queue if it still has burst time
-                if (process.burstTime > 0 && level < queues.length - 1) {
-                    queues[level + 1].push(process);
+                if (process.burstTime > 0) {
+                    if (level < queues.length - 1) {
+                        queues[level + 1].push(process);
+                    } else {
+                        queues[level].push(process); // Stay in the last queue
+                    }
                 }
 
                 // Set finish time if process finishes
                 if (process.burstTime === 0 && process.finishTime === null) {
                     process.finishTime = time;
                 }
+
+                executed = true;
                 break;
             }
+        }
+
+        // If no process was executed, move time forward
+        if (!executed) {
+            time++;
         }
     }
 
